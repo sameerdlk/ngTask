@@ -1,3 +1,188 @@
-<h1>
-  {{title}}
-</h1>
+<div class="container">
+	<header>
+		<h1 class="page_title">Your Shopping Bag</h1>
+	</header>
+	<main>
+		<div class="product-list" *ngIf="productsInCart">
+			<div class="row list-caption hidden-sm hidden-xs">
+				<div class="col-md-4  col-xs-6"><span cass="item-count">{{productsInCart.length}}</span> Items</div>
+				<div class="col-md-8 col-xs-6">
+					<div class="row">
+						<div class="col-md-6"></div>
+						<div class="col-md-2">size</div>
+						<div class="col-md-2">qty</div>
+						<div class="col-md-2">price</div>
+					</div>
+				</div>
+			</div>
+			<!-- Product Row -->
+			<div class="row list-item" *ngFor="let cartItem of productsInCart">
+				<div class="col-md-4  col-xs-6">
+					<div class="product-image">
+						<img src="assets/{{cartItem.p_img}}" alt="{{cartItem.p_name}}" class="img-responsive">
+					</div>
+				</div>
+				<div class="col-md-8 col-xs-6">
+					<div class="product-section">
+						<div class="row">
+							<div class="col-md-6">
+								<div class="product-info">
+									<h3 class="product-title">{{cartItem.p_variation}} {{cartItem.p_name}}</h3>
+									<p>Style #: <span>{{cartItem.p_style}}</span></p>
+									<p>Colour: <span>{{cartItem.p_selected_color.name}}</span></p>
+								</div>
+							</div>
+							<div class="col-md-2">
+								<p><span class="product-size">{{cartItem.p_selected_size.code | uppercase}}</span></p>
+							</div>
+							<div class="col-md-2">
+								<div class="product-qty"><label class="hidden-md hidden-lg">Qty </label><input type="number" min="1" max="10" value="{{cartItem.p_quantity}}"
+										(change)="updateQty(cartItem, qty)" #qty></div>
+							</div>
+							<div class="col-md-2">
+								<div class="product-pre-price" *ngIf="cartItem.p_originalprice!=cartItem.p_price">{{(cartItem.p_originalprice*cartItem.p_quantity) | number : '1.2-2'}}</div>
+								<div class="product-price">{{(cartItem.p_price*cartItem.p_quantity) | number : '1.2-2'}}</div>
+							</div>
+						</div>
+						<div class="row hidden-sm hidden-xs d-view">
+							<div class="col-md-12">
+								<ul class="cart-action ">
+									<li><a data-toggle="modal" data-target="#myModal">Edit</a></li>
+									<li><a (click)="removeCartItem(cartItem)">X Remove</a></li>
+									<li><a>Save For Later</a></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-xs-12 hidden-md hidden-lg m-view">
+					<ul class="cart-action">
+						<li><a data-toggle="modal" data-target="#myModal">Edit</a></li>
+						<li><a (click)="removeCartItem(cartItem)">X Remove</a></li>
+						<li><a>Save For Later</a></li>
+					</ul>
+				</div>
+			</div>
+			<!-- Product Row End-->
+		</div>
+
+    <div class="col-md-12"><button class="btn btn-primary" (click)="addCartItem()">Add Product</button></div>
+
+		<!-- Payment Detail -->
+		<div class="payment-detail-section">
+			<div class="row">
+				<div class="col-md-6 hidden-sm hidden-xs">
+					<div class="help-block">
+						<h4>Need Help or have questions?</h4>
+						<p>Call Customer Service at <br> 1-800-555-555</p>
+						<p>Chat with one of our stttylists</p>
+						<p>See Return and exchange policy</p>
+					</div>
+				</div>
+				<div class="col-md-6">
+
+					<div class="row coupon-section">
+						<div class="col-md-5  col-xs-12 text-center">
+							<span>ENTER PROMOTION CODE <br> OR GIFT CARD</span>
+						</div>
+						<div class="col-md-5 col-xs-8"><input type="text" name="" class="form-control"></div>
+						<div class="col-md-2  col-xs-4">
+
+
+							<button class="btn btn-default">APPLY</button>
+
+						</div>
+
+					</div>
+
+					<div class="payment-description">
+						<div class="row">
+							<div class="col-md-6">Subtotal</div>
+							<div class="col-md-6">{{subTotal | number : '1.2-2'}}</div>
+						</div>
+						<div class="row">
+							<div class="col-md-6">Estimated Shipping*</div>
+							<div class="col-md-6">FREE</div>
+						</div>
+						<div class="row">
+							<div class="col-md-6">Promotion Code </div>
+							<div class="col-md-6">-{{discount | number : '1.2-2'}}</div>
+						</div>
+						<div class="row">
+							<div class="col-md-6">Estimated total </div>
+							<div class="col-md-6">{{estimatedTotal | number : '1.2-2'}}</div>
+						</div>
+
+						<div class="row">
+							<div class="col-md-6">Continue Shipping </div>
+							<div class="col-md-6"><button class="btn btn-primary">CHECKOUT</button></div>
+						</div>
+						<div class="row">
+							<div class="col-md-12">
+								<p><img src="assets/lock.jpg" alt="">Secure Checkout. Shopping is always safe and Secure</p>
+							</div>
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+		<!-- Payment Detail End  -->
+	</main>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-md-12">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					</div>
+				</div>
+
+
+				<div class="row">
+					<div class="col-md-6 col-md-push-6 text-center"><img src="assets/P1.jpg" alt="" class="product-image-modal"></div>
+					<div class="col-md-6 col-md-pull-6 text-center">
+						<div class="modal-product-desc">
+							<div class="modal-product-title">Paisley jean</div>
+							<div class="modal-product-price">21</div>
+
+						</div>
+						<div class="modal-product-meta">
+							<div class="">
+								<span>PAISLEY</span>
+								<ul class="color-list">
+									<li style="background:#fff"><a class="color-btn"><span class="sr-only">paisley white</span></a></li>
+									<li style="background:#A4D3A0"><a class="color-btn"><span class="sr-only">paisley Green</span></a></li>
+								</ul>
+							</div>
+							<div class="filter-option">
+								<select>
+       					<option>SIZE</option>
+       					<option>S</option>
+       				</select>
+								<select>
+       					<option>QTY</option>
+       					<option>1</option>
+       				</select>
+							</div>
+							<div class="modal-cta-edit">
+								<a class="btn btn-primary btn-lg btn-block">EDIT</a>
+							</div>
+						</div>
+						<div class="">
+							<a class="product-detail-link" href="#">See product details</a>
+						</div>
+
+					</div>
+
+				</div>
+			</div>
+
+		</div>
+	</div>
+</div>
