@@ -20,6 +20,17 @@ export class CartService extends Init{
         localStorage.setItem('cart', JSON.stringify(cartItems));
     }
 
+    updateCartItem(cartItem){
+        var cartItems = JSON.parse(localStorage.getItem('cart'));
+        for(var i=0; i<cartItems.length; i++){
+            if(cartItems[i].p_id == cartItem.p_id){
+                cartItems[i] = cartItem;
+            }
+        }
+        localStorage.setItem('cart', JSON.stringify(cartItems));
+    }
+
+    /*
     updateCartItem(cartItem, newColor, newSize, newQty){
         var cartItems = JSON.parse(localStorage.getItem('cart'));
         for(var i=0; i<cartItems.length; i++){
@@ -31,6 +42,7 @@ export class CartService extends Init{
         }
         localStorage.setItem('cart', JSON.stringify(cartItems));
     }
+    */
 
     updateQty(cartItem, qty){
         var cartItems = JSON.parse(localStorage.getItem('cart'));

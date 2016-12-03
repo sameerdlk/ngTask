@@ -5,7 +5,7 @@
 	<main>
 		<div class="product-list" *ngIf="productsInCart">
 			<div class="row list-caption hidden-sm hidden-xs">
-				<div class="col-md-4  col-xs-6"><span cass="item-count">{{productsInCart.length}}</span> Items</div>
+				<div class="col-md-4  col-xs-6  item-count"><b>{{productsInCart.length}}</b> Items</div>
 				<div class="col-md-8 col-xs-6">
 					<div class="row">
 						<div class="col-md-6"></div>
@@ -47,7 +47,7 @@
 						<div class="row hidden-sm hidden-xs d-view">
 							<div class="col-md-12">
 								<ul class="cart-action ">
-									<li><a data-toggle="modal" data-target="#myModal">Edit</a></li>
+									<li><a data-toggle="modal" data-target="#myModal" (click)="openEditModal(cartItem)">Edit</a></li>
 									<li><a (click)="removeCartItem(cartItem)">X Remove</a></li>
 									<li><a>Save For Later</a></li>
 								</ul>
@@ -66,7 +66,11 @@
 			<!-- Product Row End-->
 		</div>
 
-    <div class="col-md-12"><button class="btn btn-primary" (click)="addCartItem()">Add Product</button></div>
+    <div class="add-product-section">
+      <div class="row">
+        <div class="col-md-3"><button class="btn btn-primary btn-block btn-addproduct" (click)="openAddModal()" data-toggle="modal" data-target="#myModal">Add Product</button></div>
+      </div>
+    </div>
 
 		<!-- Payment Detail -->
 		<div class="payment-detail-section">
@@ -80,52 +84,74 @@
 					</div>
 				</div>
 				<div class="col-md-6">
-
 					<div class="row coupon-section">
-						<div class="col-md-5  col-xs-12 text-center">
+						<div class="col-md-5  col-xs-12 ">
 							<span>ENTER PROMOTION CODE <br> OR GIFT CARD</span>
 						</div>
-						<div class="col-md-5 col-xs-8"><input type="text" name="" class="form-control"></div>
+						<div class="col-md-5 col-xs-8"><input type="text" name="coupon" class="form-control"></div>
 						<div class="col-md-2  col-xs-4">
 
 
 							<button class="btn btn-default">APPLY</button>
 
 						</div>
-
 					</div>
-
 					<div class="payment-description">
 						<div class="row">
-							<div class="col-md-6">Subtotal</div>
-							<div class="col-md-6">{{subTotal | number : '1.2-2'}}</div>
-						</div>
-						<div class="row">
-							<div class="col-md-6">Estimated Shipping*</div>
-							<div class="col-md-6">FREE</div>
-						</div>
-						<div class="row">
-							<div class="col-md-6">Promotion Code </div>
-							<div class="col-md-6">-{{discount | number : '1.2-2'}}</div>
-						</div>
-						<div class="row">
-							<div class="col-md-6">Estimated total </div>
-							<div class="col-md-6">{{estimatedTotal | number : '1.2-2'}}</div>
-						</div>
-
-						<div class="row">
-							<div class="col-md-6">Continue Shipping </div>
-							<div class="col-md-6"><button class="btn btn-primary">CHECKOUT</button></div>
-						</div>
-						<div class="row">
-							<div class="col-md-12">
-								<p><img src="assets/lock.jpg" alt="">Secure Checkout. Shopping is always safe and Secure</p>
+							<div class="col-md-6 col-xs-6">
+								<h5 class="caption">Subtotal</h5>
+							</div>
+							<div class="col-md-6 col-xs-6">
+								<h5 class="value product-price">{{subTotal | number : '1.2-2'}}</h5>
 							</div>
 						</div>
-					</div>
 
+						<div class="row">
+							<div class="col-md-6 col-xs-6">
+								<h5 class="caption">Promotion Code </h5>
+							</div>
+							<div class="col-md-6 col-xs-6">
+								<h5 class="value product-price">-{{discount | number : '1.2-2'}}</h5>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-6 col-xs-6">
+								<h5 class="caption">Estimated Shipping*</h5>
+								<p>You qualify for free shipping because your order is over 550*</p>
+							</div>
+							<div class="col-md-6 col-xs-6">
+								<h5 class="value">FREE</h5>
+
+							</div>
+						</div>
+						<div class="row estimated">
+							<div class="col-md-6 col-xs-6">
+								<h2 class="caption">Estimated total</h2>
+								<p>You qualify for free shipping because your order is over 550*</p>
+							</div>
+							<div class="col-md-6 col-xs-6">
+								<h2 class="value product-price">{{estimatedTotal | number : '1.2-2'}}</h2>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-9 hidden-sm hidden-xs text-right"><a class="btn">Continue Shipping </a></div>
+							<div class="col-md-3"><button class="btn btn-primary btn-block btn-checkout">CHECKOUT</button></div>
+
+						</div>
+						<div class="row">
+							<div class="col-md-12 hidden-md hidden-lg text-center shipping-link"><a class="btn">Continue Shipping </a></div>
+						</div>
+						<div class="col-md-12 text-center secure-checkout">
+							<p><img src="assets/lock.jpg" class="hidden-xs hidden-sm" alt="">Secure Checkout. Shopping is always safe and Secure</p>
+							<div class="text-center hidden-md hidden-lg"><img src="assets/lock.jpg" alt=""></div>
+						</div>
+						<div class="col-md-12 hidden-md hidden-lg  sign-in-cta">
+							<p><a href="">SIGN IN</a> to save your cart and have access to your item on mobile, tablet and desktop</p>
+						</div>
+					</div>
 				</div>
 			</div>
+
 		</div>
 		<!-- Payment Detail End  -->
 	</main>
@@ -133,7 +159,7 @@
 
 <!-- Modal -->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-	<div class="modal-dialog" role="document">
+	<div class="modal-dialog" role="document" *ngIf="cartItem">
 		<div class="modal-content">
 
 			<div class="modal-body">
@@ -145,33 +171,32 @@
 
 
 				<div class="row">
-					<div class="col-md-6 col-md-push-6 text-center"><img src="assets/P1.jpg" alt="" class="product-image-modal"></div>
+					<div class="col-md-6 col-md-push-6 text-center"><img src="assets/{{cartItem.p_img}}" alt="{{cartItem.p_img}}" class="product-image-modal"></div>
 					<div class="col-md-6 col-md-pull-6 text-center">
 						<div class="modal-product-desc">
-							<div class="modal-product-title">Paisley jean</div>
-							<div class="modal-product-price">21</div>
+							<div class="modal-product-title">{{cartItem.p_name}}</div>
+							<div class="modal-product-price">{{cartItem.p_price}}</div>
 
 						</div>
-						<div class="modal-product-meta">
+						<div class="modal-product-meta" *ngIf="cartItem.p_available_options">
 							<div class="">
-								<span>PAISLEY</span>
-								<ul class="color-list">
-									<li style="background:#fff"><a class="color-btn"><span class="sr-only">paisley white</span></a></li>
-									<li style="background:#A4D3A0"><a class="color-btn"><span class="sr-only">paisley Green</span></a></li>
+								<span>{{cartItem.p_variation}}</span>
+								<ul class="color-list" *ngIf="cartItem.p_available_options.colors">
+									<li *ngFor="let color of cartItem.p_available_options.colors" [class.active]="color.hexcode==cartItem.p_selected_color.hexcode" [style.background]="color.hexcode"><a class="color-btn" (click)="updateModalColor(color.hexcode)"><span class="sr-only">{{cartItem.p_variation}} {{color.name}}</span></a></li>
 								</ul>
 							</div>
-							<div class="filter-option">
-								<select>
-       					<option>SIZE</option>
-       					<option>S</option>
-       				</select>
-								<select>
-       					<option>QTY</option>
-       					<option>1</option>
-       				</select>
+							<div class="filter-option" *ngIf="cartItem.p_available_options.sizes">
+								<select class="form-control" (change)="updateModalSize($event.target.value)">
+                  <option>SIZE</option>
+                  <option *ngFor="let size of cartItem.p_available_options.sizes" value="{{size.code}}" [selected]="cartItem.p_selected_size.code == size.code">{{size.name | uppercase}}</option>
+                </select>
+								<select class="form-control" (change)="updateModalQty($event.target.value)">
+                  <option>QTY</option>
+                  <option *ngFor="let i of qtyList" value="{{i}}" [selected]="cartItem.p_quantity == qtyList">{{i}}</option>
+                </select>
 							</div>
 							<div class="modal-cta-edit">
-								<a class="btn btn-primary btn-lg btn-block">EDIT</a>
+								<a class="btn btn-primary btn-lg btn-block" data-dismiss="modal" aria-label="Close">{{isEditMode==true ? 'EDIT' : 'ADD'}}</a>
 							</div>
 						</div>
 						<div class="">
