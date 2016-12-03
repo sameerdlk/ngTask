@@ -86,6 +86,7 @@ top: -5px; margin-right:5px;}
 .color-list .active {border:1px solid; color:navy;}
 
 h5.caption {text-transform: uppercase;}
+h2.caption {text-transform: uppercase;}
 
 @media(min-width: 768px)
 {

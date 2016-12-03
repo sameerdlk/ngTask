@@ -14,11 +14,6 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   private viewContainerRef: ViewContainerRef;
   @ViewChild('childModal') public childModal:ModalDirective;
 
-  /*@Output() public onShow:EventEmitter<ModalDirective> = new EventEmitter();
-  @Output() public onShown:EventEmitter<ModalDirective> = new EventEmitter();
-  @Output() public onHide:EventEmitter<ModalDirective> = new EventEmitter();
-  @Output() public onHidden:EventEmitter<ModalDirective> = new EventEmitter();*/
-
   productsInCart: Array<Object> = [];
   subTotal: number = 0;
   discount: number = 0;
@@ -120,13 +115,18 @@ export class AppComponent implements AfterViewInit, OnDestroy {
       "p_price": 19.0,
       "c_currency": "$"
     };
+    this.cartItemColor = this.cartItem.p_selected_color;
+    this.cartItemSize = this.cartItem.p_selected_size;
+    this.cartItemQty = this.cartItem.p_quantity;
     this.childModal.show();
   }
 
   openEditModal(cartItem) {
     this.isEditMode = true;
     this.cartItem = cartItem;
-    Object.assign(this.cartItem, cartItem)
+    this.cartItemColor = cartItem.p_selected_color;
+    this.cartItemSize = cartItem.p_selected_size;
+    this.cartItemQty = cartItem.p_quantity;
     this.childModal.show();
   }
 
@@ -182,12 +182,15 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     this.subTotal = this._cartService.getSubTotal();
     if (this.productsInCart.length <= 3) {
       this.discount = this.subTotal * 0.05;
+      this.promotionCode = 'JF05';
     }
     else if (this.productsInCart.length >= 4 && this.productsInCart.length <= 10) {
       this.discount = this.subTotal * 0.1;
+      this.promotionCode = 'JF10';
     }
     else {
       this.discount = this.subTotal * 0.25;
+      this.promotionCode = 'JF25';
     }
     this.estimatedTotal = this.subTotal - this.discount;
   }
@@ -199,5 +202,9 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   public hideChildModal() {
     this.childModal.hide();
     this.isEditMode = false;
+    this.cartItem = null;
+    this.cartItemColor = null;
+    this.cartItemSize = null;
+    this.cartItemQty = 0;
   }
 }

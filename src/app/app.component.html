@@ -57,7 +57,7 @@
 				</div>
 				<div class="col-xs-12 hidden-md hidden-lg m-view">
 					<ul class="cart-action">
-						<li><a>Edit</a></li>
+						<li><a (click)="openEditModal(cartItem)">Edit</a></li>
 						<li><a (click)="removeCartItem(cartItem)">X Remove</a></li>
 						<li><a>Save For Later</a></li>
 					</ul>
@@ -75,7 +75,7 @@
 		<!-- Payment Detail -->
 		<div class="payment-detail-section">
 			<div class="row">
-				<div class="col-md-6 hidden-sm hidden-xs">
+				<div class="col-md-5 hidden-sm hidden-xs">
 					<div class="help-block">
 						<h4>Need Help or have questions?</h4>
 						<p>Call Customer Service at <br> 1-800-555-555</p>
@@ -83,10 +83,10 @@
 						<p>See Return and exchange policy</p>
 					</div>
 				</div>
-				<div class="col-md-6">
+				<div class="col-md-7">
 					<div class="row coupon-section">
 						<div class="col-md-5  col-xs-12 ">
-							<span>ENTER PROMOTION CODE <br> OR GIFT CARD</span>
+							<span style="text-align: left">ENTER PROMOTION CODE <br> OR GIFT CARD</span>
 						</div>
 						<div class="col-md-5 col-xs-8"><input type="text" name="coupon" class="form-control"></div>
 						<div class="col-md-2  col-xs-4">
@@ -127,7 +127,7 @@
 						<div class="row estimated">
 							<div class="col-md-6 col-xs-6">
 								<h2 class="caption">Estimated total</h2>
-								<p>You qualify for free shipping because your order is over 550*</p>
+								<p>Tax will be applied while checkout</p>
 							</div>
 							<div class="col-md-6 col-xs-6">
 								<h2 class="value product-price">{{estimatedTotal | number : '1.2-2'}}</h2>
