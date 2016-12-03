@@ -46,6 +46,7 @@
 .filter-option select{ padding:5px; border:1px solid #ddd; width:112px;}
 .modal-product-desc{ border-top:4px solid #ddd; padding:20px 0; }
 .modal-cta-edit a{border-radius: 0}
+.modal-cta-edit button{border-radius: 0}
 .modal-cta-edit{padding:20px;}
 .product-detail-link{ color:#888; font-size:14px; }
 .product-detail-link:hover{ color:#333; }
@@ -53,6 +54,9 @@
 .product-image-modal{width: 150px; }
 .product-pre-price{ color:#888; text-decoration:line-through; position:relative;}
 .product-price:before{width:15px; height:15px; font-size:12px; content: '$';  position: relative;
+    top: -3px; left:-4px; }
+.product-price-dollar{ font-size:22px;color:#111 }
+.product-price-dollar:before{width:15px; height:15px; font-size:12px; content: '-$';  position: relative;
     top: -3px; left:-4px; }
 
 .product-pre-price:before {font-size:12px; content: '$';  position: relative;
@@ -80,6 +84,8 @@ top: -5px; margin-right:5px;}
 .filter-option .form-control { display: inline; }
 
 .color-list .active {border:1px solid; color:navy;}
+
+h5.caption {text-transform: uppercase;}
 
 @media(min-width: 768px)
 {

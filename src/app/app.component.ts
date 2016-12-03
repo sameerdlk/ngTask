@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, ViewContainerRef, ViewChild, Input, Output, AfterViewInit, OnDestroy, EventEmitter } from '@angular/core';
+import { ModalModule, ModalDirective } from 'ng2-bootstrap/ng2-bootstrap';
 
 import { CartService } from './services/cart.service';
 
@@ -6,85 +7,44 @@ import { CartService } from './services/cart.service';
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
-  providers: [CartService]
+  providers: [CartService],
+  exportAs: 'bs-modal'
 })
-export class AppComponent {
+export class AppComponent implements AfterViewInit, OnDestroy {
+  private viewContainerRef: ViewContainerRef;
+  @ViewChild('childModal') public childModal:ModalDirective;
+
+  /*@Output() public onShow:EventEmitter<ModalDirective> = new EventEmitter();
+  @Output() public onShown:EventEmitter<ModalDirective> = new EventEmitter();
+  @Output() public onHide:EventEmitter<ModalDirective> = new EventEmitter();
+  @Output() public onHidden:EventEmitter<ModalDirective> = new EventEmitter();*/
+
   productsInCart: Array<Object> = [];
   subTotal: number = 0;
   discount: number = 0;
+  promotionCode: string = 'JF05';
   estimatedTotal: number = 0;
 
   isEditMode: boolean = false;
   cartItem: any;
+  cartItemColor: Object = {};
+  cartItemSize: Object = {};
+  cartItemQty: number = 1;
+  isCartItemError: boolean = false;
 
   qtyList = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
-  constructor(private _cartService: CartService) {
+  constructor(viewContainerRef: ViewContainerRef, private _cartService: CartService) {
+    this.viewContainerRef = viewContainerRef;
+
     this.productsInCart = this._cartService.getCartItems();
     this.calculateEstimatedTotal();
   }
 
-  addCartItem() {
-    this.isEditMode = false;
+  ngAfterViewInit() {
+  }
 
-    var newCartItem = {
-      "p_id": (this.productsInCart.length + 1) + '',
-      "p_img": "P1.jpg",
-      "p_name": "New Prodcut",
-      "p_variation": "women green",
-      "p_style": "ms13kt1234",
-      "p_selected_color": {
-        "name": "green",
-        "hexcode": "#A3D2A1"
-      },
-      "p_selected_size": {
-        "name": "medium",
-        "code": "m"
-      },
-      "p_available_options": {
-        "colors": [
-          {
-            "name": "green",
-            "hexcode": "#A3D2A1"
-          },
-          {
-            "name": "yellow",
-            "hexcode": "#F9F8E6"
-          },
-          {
-            "name": "red",
-            "hexcode": "#ED99A8"
-          }
-        ],
-        "sizes": [
-          {
-            "name": "small",
-            "code": "s"
-          },
-          {
-            "name": "medium",
-            "code": "m"
-          },
-          {
-            "name": "large",
-            "code": "l"
-          },
-          {
-            "name": "extra large",
-            "code": "xl"
-          }
-        ]
-      },
-      "p_quantity": 1,
-      "p_originalprice": 19.0,
-      "p_price": 19.0,
-      "c_currency": "$"
-    };
-
-    this.productsInCart.push(newCartItem);
-    this._cartService.addCartItem(newCartItem);
-    this.productsInCart = this._cartService.getCartItems();
-    this.calculateEstimatedTotal();
+  ngOnDestroy() {
   }
 
   removeCartItem(cartItem) {
@@ -113,8 +73,8 @@ export class AppComponent {
     this.cartItem = {
       "p_id": (this.productsInCart.length + 1) + '',
       "p_img": "P1.jpg",
-      "p_name": "New Prodcut",
-      "p_variation": "women green",
+      "p_name": "trousers",
+      "p_variation": "men",
       "p_style": "ms13kt1234",
       "p_selected_color": {
         "name": "green",
@@ -160,82 +120,84 @@ export class AppComponent {
       "p_price": 19.0,
       "c_currency": "$"
     };
-    console.log('add', this.cartItem);
+    this.childModal.show();
   }
 
   openEditModal(cartItem) {
     this.isEditMode = true;
     this.cartItem = cartItem;
-    console.log('edit', this.cartItem);
+    Object.assign(this.cartItem, cartItem)
+    this.childModal.show();
   }
 
-  closeModal() {
-    this.isEditMode = false;
+  updateModalQty(qty) {
+    this.cartItemQty = qty;
   }
 
-  updateModalQty(qty){
-    this.cartItem.p_quantity = qty;
-  }
-
-  updateModalSize(size){
-    /*if(size == 's')
-      this.cartItem.p_selected_size = {"name": "small","code": "s"};
-    else if(size == 'm')
-      this.cartItem.p_selected_size = {"name": "medium","code": "m"};
-    else if(size == 'l')
-      this.cartItem.p_selected_size = {"name": "large","code": "l"};
-    else
-      this.cartItem.p_selected_size = {"name": "extra large","code": "xl"};*/
-    var sizeOptions = this.cartItem.p_available_options.sizes;
-    for(var i=0; i<sizeOptions.length; i++){
-        if(sizeOptions[i].code == size){
-            this.cartItem.p_selected_size = sizeOptions[i];
-        }
-    }
-  }
-
-  updateModalColor(color){
-    /*if(color == 'green')
-      this.cartItem.p_selected_size = { "name": "green", "hexcode": "#A3D2A1"};
-    else if(color == 'yellow')
-      this.cartItem.p_selected_size = { "name": "green", "hexcode": "#F9F8E6"};
-    else if(color == 'red')
-      this.cartItem.p_selected_size = { "name": "green", "hexcode": "#ED99A8"};
-    else if(color == 'pink')
-      this.cartItem.p_selected_size = { "name": "green", "hexcode": "#F1DDEF"};
-    else if(color == 'blue')
-      this.cartItem.p_selected_size = { "name": "green", "hexcode": "#1169BD"};
-    else
-      this.cartItem.p_selected_size = {"name": "extra large","code": "xl"};*/
-    var colorOptions = this.cartItem.p_available_options.colors;
-    for(var i=0; i<colorOptions.length; i++){
-        if(colorOptions[i].hexcode == color){
-            this.cartItem.p_selected_color = colorOptions[i];
-        }
-    }
-  }
-
-  saveItem(){
-    if(this.isEditMode){
-      this._cartService.updateCartItem(this.cartItem);
+  updateModalSize(size) {
+    if (size == 'SIZE') {
+      this.cartItem.p_selected_size = {};
     } else {
-      this._cartService.addCartItem(this.cartItem);
+      var sizeOptions = this.cartItem.p_available_options.sizes;
+      for (var i = 0; i < sizeOptions.length; i++) {
+        if (sizeOptions[i].code == size) {
+          this.cartItemSize = sizeOptions[i];
+        }
+      }
     }
-    this.productsInCart = this._cartService.getCartItems();
-    this.calculateEstimatedTotal();
+  }
+
+  updateModalColor(color) {
+    var colorOptions = this.cartItem.p_available_options.colors;
+    for (var i = 0; i < colorOptions.length; i++) {
+      if (colorOptions[i].hexcode == color) {
+        this.cartItemColor = colorOptions[i];
+      }
+    }
+  }
+
+  saveItem() {
+    var _flg: boolean = true;
+    if(this.cartItemSize == undefined)
+      _flg = false;
+    if(_flg){
+      if(this.isEditMode){
+        this._cartService.updateCartItem(this.cartItem, this.cartItemColor, this.cartItemSize, this.cartItemQty);
+      } else {
+        this.cartItem.p_selected_color = this.cartItemColor;
+        this.cartItem.p_selected_size = this.cartItemSize;
+        this.cartItem.p_quantity = this.cartItemQty;
+        this._cartService.addCartItem(this.cartItem);
+      }
+      this.productsInCart = this._cartService.getCartItems();
+      this.calculateEstimatedTotal();
+      this.isCartItemError = false;
+      this.hideChildModal();
+    } else {
+      this.isCartItemError = true;
+    }
   }
 
   calculateEstimatedTotal() {
     this.subTotal = this._cartService.getSubTotal();
-    if (this.productsInCart.length <= 3){
+    if (this.productsInCart.length <= 3) {
       this.discount = this.subTotal * 0.05;
     }
-    else if (this.productsInCart.length >= 4 && this.productsInCart.length <= 10){
+    else if (this.productsInCart.length >= 4 && this.productsInCart.length <= 10) {
       this.discount = this.subTotal * 0.1;
     }
     else {
       this.discount = this.subTotal * 0.25;
     }
     this.estimatedTotal = this.subTotal - this.discount;
+  }
+
+  public showChildModal() {
+    this.childModal.show();
+  }
+
+  public hideChildModal() {
+    this.childModal.hide();
+    this.isEditMode = false;
   }
 }

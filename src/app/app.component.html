@@ -47,7 +47,7 @@
 						<div class="row hidden-sm hidden-xs d-view">
 							<div class="col-md-12">
 								<ul class="cart-action ">
-									<li><a data-toggle="modal" data-target="#myModal" (click)="openEditModal(cartItem)">Edit</a></li>
+									<li><a (click)="openEditModal(cartItem)">Edit</a></li>
 									<li><a (click)="removeCartItem(cartItem)">X Remove</a></li>
 									<li><a>Save For Later</a></li>
 								</ul>
@@ -57,7 +57,7 @@
 				</div>
 				<div class="col-xs-12 hidden-md hidden-lg m-view">
 					<ul class="cart-action">
-						<li><a data-toggle="modal" data-target="#myModal">Edit</a></li>
+						<li><a>Edit</a></li>
 						<li><a (click)="removeCartItem(cartItem)">X Remove</a></li>
 						<li><a>Save For Later</a></li>
 					</ul>
@@ -66,11 +66,11 @@
 			<!-- Product Row End-->
 		</div>
 
-    <div class="add-product-section">
-      <div class="row">
-        <div class="col-md-3"><button class="btn btn-primary btn-block btn-addproduct" (click)="openAddModal()" data-toggle="modal" data-target="#myModal">Add Product</button></div>
-      </div>
-    </div>
+		<div class="add-product-section">
+			<div class="row">
+				<div class="col-md-3"><button class="btn btn-primary btn-block btn-addproduct" (click)="openAddModal()">Add Product</button></div>
+			</div>
+		</div>
 
 		<!-- Payment Detail -->
 		<div class="payment-detail-section">
@@ -108,10 +108,10 @@
 
 						<div class="row">
 							<div class="col-md-6 col-xs-6">
-								<h5 class="caption">Promotion Code </h5>
+								<h5 class="caption">Promotion Code {{promotionCode}} applied</h5>
 							</div>
 							<div class="col-md-6 col-xs-6">
-								<h5 class="value product-price">-{{discount | number : '1.2-2'}}</h5>
+								<h5 class="value product-price-dollar">{{discount | number : '1.2-2'}}</h5>
 							</div>
 						</div>
 						<div class="row">
@@ -158,14 +158,15 @@
 </div>
 
 <!-- Modal -->
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+<div bsModal #childModal="bs-modal" class="modal fade" id="childModal" tabindex="-1" role="dialog" aria-labelledby="childModal"
+	aria-hidden="true">
 	<div class="modal-dialog" role="document" *ngIf="cartItem">
 		<div class="modal-content">
 
 			<div class="modal-body">
 				<div class="row">
 					<div class="col-md-12">
-						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<button type="button" class="close" aria-label="Close" (click)="hideChildModal()"><span aria-hidden="true">&times;</span></button>
 					</div>
 				</div>
 
@@ -176,31 +177,34 @@
 						<div class="modal-product-desc">
 							<div class="modal-product-title">{{cartItem.p_name}}</div>
 							<div class="modal-product-price">{{cartItem.p_price}}</div>
-
 						</div>
 						<div class="modal-product-meta" *ngIf="cartItem.p_available_options">
-							<div class="">
-								<span>{{cartItem.p_variation}}</span>
-								<ul class="color-list" *ngIf="cartItem.p_available_options.colors">
-									<li *ngFor="let color of cartItem.p_available_options.colors" [class.active]="color.hexcode==cartItem.p_selected_color.hexcode" [style.background]="color.hexcode"><a class="color-btn" (click)="updateModalColor(color.hexcode)"><span class="sr-only">{{cartItem.p_variation}} {{color.name}}</span></a></li>
-								</ul>
-							</div>
-							<div class="filter-option" *ngIf="cartItem.p_available_options.sizes">
-								<select class="form-control" (change)="updateModalSize($event.target.value)">
+              <div>
+                <span>{{cartItem.p_variation}}</span>
+                <ul class="color-list" *ngIf="cartItem.p_available_options.colors">
+                  <li *ngFor="let color of cartItem.p_available_options.colors" [class.active]="color.hexcode==cartItemColor.hexcode"
+                    [style.background]="color.hexcode"><a class="color-btn" (click)="updateModalColor(color.hexcode)"><span class="sr-only">{{cartItem.p_variation}} {{color.name}}</span></a></li>
+                </ul>
+              </div>
+              <div class="filter-option" *ngIf="cartItem.p_available_options.sizes">
+                <select class="form-control" (change)="updateModalSize($event.target.value)">
                   <option>SIZE</option>
                   <option *ngFor="let size of cartItem.p_available_options.sizes" value="{{size.code}}" [selected]="cartItem.p_selected_size.code == size.code">{{size.name | uppercase}}</option>
                 </select>
-								<select class="form-control" (change)="updateModalQty($event.target.value)">
+                <select class="form-control" (change)="updateModalQty($event.target.value)">
                   <option>QTY</option>
-                  <option *ngFor="let i of qtyList" value="{{i}}" [selected]="cartItem.p_quantity == qtyList">{{i}}</option>
+                  <option *ngFor="let i of qtyList" value="{{i}}" [selected]="cartItem.p_quantity == i">{{i}}</option>
                 </select>
-							</div>
-							<div class="modal-cta-edit">
-								<a class="btn btn-primary btn-lg btn-block" data-dismiss="modal" aria-label="Close">{{isEditMode==true ? 'EDIT' : 'ADD'}}</a>
-							</div>
+              </div>
+              <div class="modal-error" *ngIf="isCartItemError">
+                <span style="color:red;font-size: 12px;">Please fill the form before submitting !!!</span>
+              </div>
+              <div class="modal-cta-edit">
+                <button class="btn btn-primary btn-lg btn-block" type="submit" (click)="saveItem()">{{isEditMode==true ? 'EDIT' : 'ADD'}}</button>
+              </div>
 						</div>
 						<div class="">
-							<a class="product-detail-link" href="#">See product details</a>
+							<a class="product-detail-link">See product details</a>
 						</div>
 
 					</div>
